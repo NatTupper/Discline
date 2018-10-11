@@ -54,11 +54,14 @@ async def on_ready():
     privateGuild = PrivateGuild(gc.client.user)
     channels = []
     channel_logs = []
+    nchannels = 0
     for idx,channel in enumerate(gc.client.private_channels):
         chl = PrivateChannel(channel, privateGuild, idx)
         channels.append(chl)
         channel_logs.append(ChannelLog(chl, []))
+        nchannels += 1
     privateGuild.set_channels(channels)
+    privateGuild.set_nchannels(nchannels)
     gc.guild_log_tree.append(GuildLog(privateGuild, channel_logs))
 
     for guild in gc.client.guilds:
@@ -66,6 +69,7 @@ async def on_ready():
         if guild is None:
             continue
         serv_logs = []
+        nchannels = 0
         for channel in guild.channels:
             # Null checks to test for bugged out channels
             #if channel is None or channel.type is None:
@@ -75,19 +79,22 @@ async def on_ready():
                     or channel.permissions_for(guild.me) is None:
                 continue
             if isinstance(channel, TextChannel):
-                    if channel.permissions_for(guild.me).read_messages:
-                        try: # try/except in order to 'continue' out of multiple for loops
-                            for serv_key in gc.settings["channel_ignore_list"]:
-                                if serv_key["guild_name"].lower() == guild.name.lower():
-                                    for name in serv_key["ignores"]:
-                                        if channel.name.lower() == name.lower():
-                                            raise Found
-                            serv_logs.append(ChannelLog(channel, []))
-                        except:
-                            continue
+                nchannels += 1
+                if channel.permissions_for(guild.me).read_messages:
+                    try: # try/except in order to 'continue' out of multiple for loops
+                        for serv_key in gc.settings["channel_ignore_list"]:
+                            if serv_key["guild_name"].lower() == guild.name.lower():
+                                for name in serv_key["ignores"]:
+                                    if channel.name.lower() == name.lower():
+                                        raise Found
+                        serv_logs.append(ChannelLog(channel, []))
+                    except:
+                        continue
 
         # add the channellog to the tree
-        gc.guild_log_tree.append(GuildLog(guild, serv_logs))
+        gl = GuildLog(guild, serv_logs)
+        gl.set_nchannels(nchannels)
+        gc.guild_log_tree.append(gl)
 
     if gc.settings["default_guild"] is not None:
         gc.client.set_current_guild(gc.settings["default_guild"])

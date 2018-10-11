@@ -17,6 +17,9 @@ class PrivateGuild:
                 if member not in self.members:
                     self.members.append(member)
 
+    def set_nchannels(self, nchannels):
+        self.nchannels = nchannels
+
 # Simple wrapper class to hold a list of ChannelLogs
 class GuildLog():
     def __init__(self, guild, channel_log_list):
@@ -34,6 +37,9 @@ class GuildLog():
     @property
     def logs(self):
         return self._channel_logs
+
+    def set_nchannels(self, nchannels):
+        self.nchannels = nchannels
 
     def clear_logs(self):
         for channel_log in self._channel_logs:

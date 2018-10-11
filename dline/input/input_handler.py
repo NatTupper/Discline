@@ -1,4 +1,5 @@
 import curses
+import curses.ascii as ascii
 import logging
 import re
 import time
@@ -7,6 +8,11 @@ from dline.utils.log import log
 from dline.utils.globals import gc
 from dline.commands.sendfile import send_file
 from dline.commands.channel_jump import channel_jump
+
+KEY_CTRL_UP = 574
+KEY_CTRL_RIGHT = 568
+KEY_CTRL_DOWN = 531
+KEY_CTRL_LEFT = 553
 
 def key_input():
     # if the next two aren't here, input does not work
@@ -40,6 +46,17 @@ def key_input():
             continue
         elif ch == curses.KEY_DC:
             # TODO: Add functionality here
+            ui.draw_screen()
+            continue
+        # For later ctrl+key combos
+        elif ascii.isctrl(ch):
+            pass
+        elif ch == KEY_CTRL_LEFT:
+            gc.client.channel_backward()
+            ui.draw_screen()
+            continue
+        elif ch == KEY_CTRL_RIGHT:
+            gc.client.channel_forward()
             ui.draw_screen()
             continue
         # if ESC is pressed, clear messageEdit buffer

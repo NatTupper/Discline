@@ -73,6 +73,34 @@ class Client(discord.Client):
         # discord.Guild object
         return self._current_guild
 
+    def channel_backward(self):
+        channels = self._current_guild.channels
+        current_index = self._current_channel.position
+        nchannels = self.current_guild_log.nchannels
+        new_index = current_index-1
+        if new_index < 0:
+            new_index = nchannels-1
+
+        for channel in channels:
+            if isinstance(channel, discord.TextChannel) and\
+                    channel.position == new_index:
+                self.set_current_channel(channel)
+                break
+
+    def channel_forward(self):
+        channels = self._current_guild.channels
+        current_index = self._current_channel.position
+        nchannels = self.current_guild_log.nchannels
+        new_index = current_index+1
+        if new_index >= nchannels:
+            new_index = 0
+
+        for channel in channels:
+            if isinstance(channel, discord.TextChannel) and\
+                    channel.position == new_index:
+                self.set_current_channel(channel)
+                break
+
     def set_current_guild(self, guild):
         if isinstance(guild, str):
             for gldlog in gc.guild_log_tree:
@@ -135,8 +163,8 @@ class Client(discord.Client):
     @property
     def current_channel(self):
         return self._current_channel
-    @current_channel.setter
-    def current_channel(self, channel):
+
+    def set_current_channel(self, channel):
         if isinstance(channel, str):
             try:
                 gld = self.current_guild
@@ -179,6 +207,10 @@ class Client(discord.Client):
             chanlog = self.current_channel_log
             chanlog.unread = False
             chanlog.mentioned_in = False
+
+    @current_channel.setter
+    def current_channel(self, channel):
+        self.set_current_channel(channel)
 
     @property
     def current_guild_log(self):
