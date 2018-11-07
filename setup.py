@@ -8,12 +8,17 @@ with open('README.md') as f:
 with open('LICENSE') as f:
     license = f.read()
 
-with open('requirements.txt') as f:
-    requirements = f.read().splitlines()[:-1]
+requirements = [
+    "asyncio",
+    "blessings",
+    "pyyaml",
+    "mistletoe==0.6.2",
+    "discord.py==1.0.0a"
+]
 
 setup(
     name='dline',
-    version='2.4.0',
+    version='2.4.1',
     description='A feature-rich terminal discord client',
     long_description=readme,
     long_description_content_type='text/markdown',
