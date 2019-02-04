@@ -3,8 +3,6 @@ def check_for_updates():
     from dline.utils.globals import gc
 
     if not path.exists(".git"):
-        print(gc.term.red("Error: client not started from repo location! Cancelling..."))
-        print(gc.term.yellow("You must start the client from its folder to get automatic updates. \n"))
         return
 
     try:# git pull at start as to automatically update to master repo
