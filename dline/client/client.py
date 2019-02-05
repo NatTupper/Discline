@@ -110,27 +110,13 @@ class Client(discord.Client):
                         set_display("This guild is empty!")
                         return
                     self._current_guild = gld
-                    # find first non-ignored channel, set channel, mark flags as False
+                    # find first channel, set channel, mark flags as False
                     def_chan = None
                     lowest = 999
                     for chan in gld.channels:
                         if isinstance(chan, discord.TextChannel) and \
                                 chan.permissions_for(gld.me).read_messages and \
                                 chan.position < lowest:
-                            try:
-                                # Skip over ignored channels
-                                for serv_key in gc.settings["channel_ignore_list"]:
-                                    if serv_key["guild_name"].lower() == gld.name:
-                                        for name in serv_key["ignores"]:
-                                            if chan.name.lower() == name.lower():
-                                                raise Found
-                            except Found:
-                                continue
-                            except:
-                                e = sys.exc_info()[0]
-                                log("Exception raised during channel ignore list parsing: {}".format(e),
-                                        logging.error)
-                                return
                             lowest = chan.position
                             def_chan = chan
                         elif isinstance(chan, PrivateChannel):

@@ -81,15 +81,7 @@ async def on_ready():
             if isinstance(channel, TextChannel):
                 nchannels += 1
                 if channel.permissions_for(guild.me).read_messages:
-                    try: # try/except in order to 'continue' out of multiple for loops
-                        for serv_key in gc.settings["channel_ignore_list"]:
-                            if serv_key["guild_name"].lower() == guild.name.lower():
-                                for name in serv_key["ignores"]:
-                                    if channel.name.lower() == name.lower():
-                                        raise Found
-                        serv_logs.append(ChannelLog(channel, []))
-                    except:
-                        continue
+                    serv_logs.append(ChannelLog(channel, []))
 
         # add the channellog to the tree
         gl = GuildLog(guild, serv_logs)
